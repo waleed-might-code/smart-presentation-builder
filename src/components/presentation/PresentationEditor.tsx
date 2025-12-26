@@ -18,7 +18,6 @@ const templatePrompts = {
 
 const PresentationEditor = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [prompt, setPrompt] = useState("");
   const [title, setTitle] = useState("Untitled Presentation");

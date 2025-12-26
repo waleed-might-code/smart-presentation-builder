@@ -3,7 +3,10 @@
  * Service for communicating with the AI Presentation Generator API
  */
 
-const API_BASE_URL = 'http://pptx.techrealm.online';
+// Use proxy in development, direct URL in production
+const API_BASE_URL = import.meta.env.DEV 
+  ? '/api' 
+  : 'https://pptx.techrealm.online';
 
 export interface GeneratePresentationRequest {
   topic: string;
@@ -38,6 +41,7 @@ export const generatePresentationMarkdown = async (
     console.log('Sending request to markdown endpoint:', request);
     const response = await fetch(`${API_BASE_URL}/generate-presentation/markdown`, {
       method: 'POST',
+      mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -45,13 +49,22 @@ export const generatePresentationMarkdown = async (
     });
 
     if (!response.ok) {
-      throw new Error(`API error: ${response.status} ${response.statusText}`);
+      // Try to get error details from response body
+      let errorMessage = `API error: ${response.status} ${response.statusText}`;
+      try {
+        const errorData = await response.text();
+        if (errorData) {
+          errorMessage += ` - ${errorData}`;
+        }
+      } catch (e) {
+        // If we can't read the error body, use the status
+      }
+      throw new Error(errorMessage);
     }
 
     const data = await response.json();
     console.log('API response:', data);
     
-    // API returns HTTP URLs, no conversion needed
     return data;
   } catch (error) {
     console.error('Error generating presentation:', error);
@@ -71,6 +84,7 @@ export const generatePresentationJson = async (
     console.log('Sending request to JSON endpoint:', request);
     const response = await fetch(`${API_BASE_URL}/generate-presentation/json`, {
       method: 'POST',
+      mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -78,13 +92,22 @@ export const generatePresentationJson = async (
     });
 
     if (!response.ok) {
-      throw new Error(`API error: ${response.status} ${response.statusText}`);
+      // Try to get error details from response body
+      let errorMessage = `API error: ${response.status} ${response.statusText}`;
+      try {
+        const errorData = await response.text();
+        if (errorData) {
+          errorMessage += ` - ${errorData}`;
+        }
+      } catch (e) {
+        // If we can't read the error body, use the status
+      }
+      throw new Error(errorMessage);
     }
 
     const data = await response.json();
     console.log('API response:', data);
     
-    // API returns HTTP URLs, no conversion needed
     return data;
   } catch (error) {
     console.error('Error generating presentation:', error);

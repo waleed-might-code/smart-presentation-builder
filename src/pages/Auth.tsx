@@ -53,7 +53,7 @@ const Auth = () => {
     
     try {
       await signUp(email, password);
-      // No auto redirect as user needs to verify email first
+      // User is automatically logged in after signup
     } catch (error: any) {
       setError(error.message);
     }

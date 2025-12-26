@@ -30,16 +30,47 @@ const SlidePreview: React.FC<SlidePreviewProps> = ({
   downloadUrl,
   sidebarOpen,
 }) => {
+  // Convert download URL to Office Online Viewer URL for preview
+  const getPreviewUrl = (url: string) => {
+    try {
+      // Convert HTTP to HTTPS for Office Online Viewer (requires HTTPS)
+      let previewUrl = url;
+      if (url.startsWith('http://')) {
+        previewUrl = url.replace('http://', 'https://');
+      }
+      const encodedUrl = encodeURIComponent(previewUrl);
+      // Use Microsoft Office Online Viewer for PowerPoint files
+      return `https://view.officeapps.live.com/op/embed.aspx?src=${encodedUrl}`;
+    } catch (error) {
+      return url;
+    }
+  };
+
   return (
     <div className={`flex-1 flex flex-col transition-all duration-300 ${sidebarOpen ? 'md:ml-0 opacity-50 md:opacity-100' : 'opacity-100'} md:opacity-100`}>
       <div className="flex-1 p-2 sm:p-4 md:p-8 flex items-center justify-center bg-secondary/30 overflow-y-auto">
         {downloadUrl ? (
-          <div className="w-full max-w-4xl aspect-[16/9] bg-white rounded-lg shadow-lg overflow-hidden">
-            <iframe 
-              src={downloadUrl} 
-              className="w-full h-full" 
-              title="PowerPoint Presentation Preview"
-            ></iframe>
+          <div className="w-full max-w-4xl flex flex-col gap-4">
+            <div className="aspect-[16/9] bg-white rounded-lg shadow-lg overflow-hidden">
+              <iframe 
+                src={getPreviewUrl(downloadUrl)} 
+                className="w-full h-full" 
+                title="PowerPoint Presentation Preview"
+                allowFullScreen
+              ></iframe>
+            </div>
+            <div className="flex justify-center">
+              <Button asChild variant="default">
+                <a 
+                  href={downloadUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2"
+                >
+                  Download PowerPoint
+                </a>
+              </Button>
+            </div>
           </div>
         ) : (
           <div className="w-full max-w-4xl aspect-[16/9] bg-white rounded-lg shadow-lg p-4 sm:p-8 md:p-16 flex flex-col items-center justify-center text-center">

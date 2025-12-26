@@ -2,19 +2,13 @@ import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { generatePresentationMarkdown, generatePresentationJson, ensureHttps } from "@/services/presentationApi";
+import { templatePrompts, generateCombinedPrompt, themePrompts, layoutPrompts } from "@/lib/promptLibrary";
 
 // Import our components
 import Header from "./editor/Header";
 import Sidebar from "./editor/Sidebar";
 import SlidePreview from "./editor/SlidePreview";
 import ExportDialog from "./editor/ExportDialog";
-
-const templatePrompts = {
-  Business: "Create a professional business presentation about {topic}. Include sections for executive summary, market analysis, competitive landscape, strategy, implementation plan, and financial projections.",
-  Creative: "Design a visually engaging and creative presentation about {topic}. Use metaphors, storytelling elements, and compelling visuals to create an inspiring narrative that captures imagination.",
-  Education: "Develop an educational presentation about {topic} suitable for classroom or training environments. Structure it with clear learning objectives, key concepts, examples, practice opportunities, and assessment questions.",
-  Minimal: "Create a clean, minimalist presentation about {topic} with concise text, ample white space, and only essential visuals. Focus on key messages with no more than 5 bullet points per slide."
-};
 
 const PresentationEditor = () => {
   const navigate = useNavigate();
@@ -29,6 +23,9 @@ const PresentationEditor = () => {
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
   const [incomingSlides, setIncomingSlides] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [selectedTheme, setSelectedTheme] = useState<string | null>(null);
+  const [selectedLayout, setSelectedLayout] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<string>("generate");
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const [slides, setSlides] = useState<Array<{ title: string; content: string; image?: string }>>([
@@ -39,62 +36,49 @@ const PresentationEditor = () => {
     },
   ]);
 
-  const handleGeneratePresentation = () => {
+  const handleGeneratePresentation = async () => {
     if (!prompt.trim()) {
       toast.error("Please enter a topic or description for your presentation");
       return;
     }
 
-    setLoading(true);
-    setIncomingSlides(true);
-    
-    setTimeout(() => {
-      const generatedSlides = [
-        {
-          title: "Introduction to " + prompt,
-          content: "An overview of key concepts and ideas",
-          image: "",
-        },
-        {
-          title: "Key Benefits",
-          content: "• Improved efficiency\n• Enhanced productivity\n• Better outcomes",
-          image: "",
-        },
-        {
-          title: "Implementation Strategy",
-          content: "How to successfully implement these ideas in practice",
-          image: "",
-        },
-        {
-          title: "Results & Impact",
-          content: "Measurable outcomes and long-term benefits",
-          image: "",
-        },
-        {
-          title: "Next Steps",
-          content: "Action items and recommendations",
-          image: "",
-        },
-      ];
-
-      setSlides(generatedSlides);
+    try {
+      setLoading(true);
+      setIncomingSlides(true);
+      
+      // Build the final prompt using the prompt library
+      const finalPrompt = generateCombinedPrompt(prompt, selectedTemplate, selectedTheme, selectedLayout);
+      
+      // Call the API to generate the presentation
+      const request = {
+        topic: finalPrompt,
+        num_slides: numSlides
+      };
+      
+      const response = await generatePresentationJson(request);
+      
+      // Set the download URL which will trigger the PowerPoint preview
+      setDownloadUrl(response.download_url);
       setTitle(prompt);
       setLoading(false);
       setIncomingSlides(false);
       setCurrentSlide(0);
       
       toast.success("Presentation generated successfully!");
-    }, 2000);
+    } catch (error: any) {
+      console.error("Generate error:", error);
+      setLoading(false);
+      setIncomingSlides(false);
+      toast.error(error.message || "Failed to generate presentation. Please try again.");
+    }
   };
 
   const handleExportPowerPoint = async () => {
     try {
       setExportLoading(true);
       
-      let finalPrompt = prompt;
-      if (selectedTemplate && templatePrompts[selectedTemplate as keyof typeof templatePrompts]) {
-        finalPrompt = templatePrompts[selectedTemplate as keyof typeof templatePrompts].replace("{topic}", prompt);
-      }
+      // Build the final prompt using the prompt library
+      const finalPrompt = generateCombinedPrompt(prompt, selectedTemplate, selectedTheme, selectedLayout);
       
       const request = {
         topic: finalPrompt,
@@ -163,7 +147,36 @@ const PresentationEditor = () => {
 
   const handleTemplateSelect = (template: string) => {
     setSelectedTemplate(template);
+    // Populate prompt with template-specific prompt
+    const templatePrompt = templatePrompts[template];
+    if (templatePrompt) {
+      setPrompt(templatePrompt.replace("{topic}", prompt || "your topic"));
+    }
     toast.success(`${template} template selected`);
+  };
+
+  const handleThemeSelect = (theme: string) => {
+    setSelectedTheme(theme);
+    // Switch to generate tab
+    setActiveTab("generate");
+    // Get theme prompt and populate
+    const themePrompt = themePrompts[theme];
+    if (themePrompt) {
+      setPrompt(themePrompt.replace("{topic}", prompt || "your topic"));
+    }
+    toast.success(`${theme} theme selected`);
+  };
+
+  const handleLayoutSelect = (layout: string) => {
+    setSelectedLayout(layout);
+    // Switch to generate tab
+    setActiveTab("generate");
+    // Get layout prompt and populate
+    const layoutPrompt = layoutPrompts[layout];
+    if (layoutPrompt) {
+      setPrompt(layoutPrompt.replace("{topic}", prompt || "your topic"));
+    }
+    toast.success(`${layout} layout selected`);
   };
 
   return (
@@ -188,6 +201,12 @@ const PresentationEditor = () => {
           selectedTemplate={selectedTemplate}
           handleTemplateSelect={handleTemplateSelect}
           templatePrompts={templatePrompts}
+          selectedTheme={selectedTheme}
+          selectedLayout={selectedLayout}
+          handleThemeSelect={handleThemeSelect}
+          handleLayoutSelect={handleLayoutSelect}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
           slides={slides}
           currentSlide={currentSlide}
           setCurrentSlide={setCurrentSlide}

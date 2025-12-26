@@ -21,6 +21,12 @@ interface SidebarProps {
   selectedTemplate: string | null;
   handleTemplateSelect: (template: string) => void;
   templatePrompts: Record<string, string>;
+  selectedTheme: string | null;
+  selectedLayout: string | null;
+  handleThemeSelect: (theme: string) => void;
+  handleLayoutSelect: (layout: string) => void;
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
   slides: Slide[];
   currentSlide: number;
   setCurrentSlide: (index: number) => void;
@@ -38,6 +44,12 @@ const Sidebar: React.FC<SidebarProps> = ({
   selectedTemplate,
   handleTemplateSelect,
   templatePrompts,
+  selectedTheme,
+  selectedLayout,
+  handleThemeSelect,
+  handleLayoutSelect,
+  activeTab,
+  setActiveTab,
   slides,
   currentSlide,
   setCurrentSlide,
@@ -47,7 +59,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   return (
     <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 absolute md:relative z-10 md:z-0 w-full md:w-80 h-[calc(100vh-56px)] border-r border-border bg-white overflow-y-auto`}>
       <div className="p-4">
-        <Tabs defaultValue="generate">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="w-full mb-4">
             <TabsTrigger value="generate" className="flex-1">
               Generate
@@ -89,7 +101,12 @@ const Sidebar: React.FC<SidebarProps> = ({
           </TabsContent>
           
           <TabsContent value="design">
-            <SidebarDesign />
+            <SidebarDesign 
+              selectedTheme={selectedTheme}
+              selectedLayout={selectedLayout}
+              handleThemeSelect={handleThemeSelect}
+              handleLayoutSelect={handleLayoutSelect}
+            />
           </TabsContent>
         </Tabs>
       </div>

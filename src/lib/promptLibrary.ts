@@ -28,6 +28,7 @@ export const layoutPrompts: Record<string, string> = {
 
 /**
  * Generate a combined prompt from topic, template, theme, and layout
+ * Returns a short, concise topic string (max ~5 words) for filename usage
  */
 export function generateCombinedPrompt(
   topic: string,
@@ -35,26 +36,42 @@ export function generateCombinedPrompt(
   theme?: string | null,
   layout?: string | null
 ): string {
-  let prompt = topic;
+  // Start with just the topic (user's input)
+  let prompt = topic.trim();
 
-  // Apply template if selected
+  // Build a short combined string with selected options
+  const parts: string[] = [];
+  
+  // Add template style
   if (template && templatePrompts[template]) {
-    prompt = templatePrompts[template].replace("{topic}", prompt);
+    const templateStyle = templatePrompts[template].replace("{topic}", "").trim();
+    parts.push(templateStyle);
   }
-
-  // Add theme specification
+  
+  // Add theme style
   if (theme && themePrompts[theme]) {
-    const themePrompt = themePrompts[theme].replace("{topic}", prompt);
-    prompt = `${themePrompt} Apply the ${theme.toLowerCase()} theme throughout.`;
+    const themeStyle = themePrompts[theme].replace("{topic}", "").trim();
+    parts.push(themeStyle);
   }
-
-  // Add layout specification
+  
+  // Add layout style
   if (layout && layoutPrompts[layout]) {
-    const layoutPrompt = layoutPrompts[layout].replace("{topic}", prompt);
-    prompt = `${layoutPrompt} Use the ${layout.toLowerCase()} layout style.`;
+    const layoutStyle = layoutPrompts[layout].replace("{topic}", "").trim();
+    parts.push(layoutStyle);
   }
 
-  return prompt;
+  // Combine: if user has topic, use it. Otherwise use style descriptors
+  if (prompt) {
+    // If styles are selected, prepend them to topic
+    if (parts.length > 0) {
+      prompt = `${parts.join(" ")} ${prompt}`;
+    }
+  } else if (parts.length > 0) {
+    // No topic, just use the style descriptors
+    prompt = parts.join(" ");
+  }
+
+  return prompt.trim();
 }
 
 /**

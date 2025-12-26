@@ -2,10 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, LogOut, User, Crown, Settings } from "lucide-react";
+import { ChevronRight, LogOut, User, Settings } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useSubscription } from "@/hooks/useSubscription";
-import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,9 +20,7 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ onPricingClick }) => {
   const [scrolled, setScrolled] = useState(false);
   const { user, signOut } = useAuth();
-  const { subscription } = useSubscription();
   const navigate = useNavigate();
-  const isPremium = subscription?.status === 'paid';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -104,15 +100,6 @@ const Navbar: React.FC<NavbarProps> = ({ onPricingClick }) => {
                   <Button variant="outline" className="gap-2" type="button">
                     <User size={16} />
                     <span className="hidden md:inline">Account</span>
-                    {isPremium && (
-                      <Badge 
-                        variant="outline" 
-                        className="ml-1 bg-amber-100 text-amber-800 border-amber-300 flex items-center gap-1"
-                      >
-                        <Crown size={12} className="text-amber-500" />
-                        <span className="text-xs">Premium</span>
-                      </Badge>
-                    )}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -120,12 +107,6 @@ const Navbar: React.FC<NavbarProps> = ({ onPricingClick }) => {
                     <div className="text-xs text-muted-foreground truncate max-w-[200px]">
                       {user.email}
                     </div>
-                    {isPremium && (
-                      <div className="flex items-center gap-1 mt-1">
-                        <Crown size={12} className="text-amber-500" />
-                        <span className="text-xs font-medium text-amber-700">Premium Member</span>
-                      </div>
-                    )}
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
@@ -151,12 +132,11 @@ const Navbar: React.FC<NavbarProps> = ({ onPricingClick }) => {
                 </DropdownMenuContent>
               </DropdownMenu>
               <Button 
-                className={`group ${isPremium ? 'bg-gradient-to-r from-amber-500 to-amber-600' : ''}`} 
+                className="group" 
                 type="button"
                 onClick={handleNavigation("/create")}
               >
                 <span className="flex items-center gap-1">
-                  {isPremium && <Crown size={16} className="text-amber-100" />}
                   Create presentation
                   <ChevronRight
                     size={16}

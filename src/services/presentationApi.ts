@@ -3,7 +3,7 @@
  * Service for communicating with the AI Presentation Generator API
  */
 
-const API_BASE_URL = 'https://pptx.techrealm.online';
+const API_BASE_URL = 'http://pptx.techrealm.online';
 
 export interface GeneratePresentationRequest {
   topic: string;
@@ -51,11 +51,7 @@ export const generatePresentationMarkdown = async (
     const data = await response.json();
     console.log('API response:', data);
     
-    // Convert HTTP URLs to HTTPS
-    if (data.download_url) {
-      data.download_url = ensureHttps(data.download_url);
-    }
-    
+    // API returns HTTP URLs, no conversion needed
     return data;
   } catch (error) {
     console.error('Error generating presentation:', error);
@@ -88,11 +84,7 @@ export const generatePresentationJson = async (
     const data = await response.json();
     console.log('API response:', data);
     
-    // Convert HTTP URLs to HTTPS
-    if (data.download_url) {
-      data.download_url = ensureHttps(data.download_url);
-    }
-    
+    // API returns HTTP URLs, no conversion needed
     return data;
   } catch (error) {
     console.error('Error generating presentation:', error);

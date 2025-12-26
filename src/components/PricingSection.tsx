@@ -1,15 +1,13 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Check, CreditCard, Crown } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Check, CreditCard } from "lucide-react";
 
 interface PricingProps {
   onSubscribe: () => void;
-  isPremium?: boolean;
 }
 
-const PricingSection: React.FC<PricingProps> = ({ onSubscribe, isPremium = false }) => {
+const PricingSection: React.FC<PricingProps> = ({ onSubscribe }) => {
   return (
     <section id="pricing" className="py-24 px-6 bg-secondary/20">
       <div className="max-w-5xl mx-auto text-center">
@@ -44,16 +42,9 @@ const PricingSection: React.FC<PricingProps> = ({ onSubscribe, isPremium = false
           
           {/* Paid plan */}
           <div className="border rounded-lg p-8 bg-background shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
-            {isPremium ? (
-              <div className="absolute top-0 right-0 bg-amber-500 text-white text-xs font-medium py-1 px-3 rounded-bl-lg flex items-center gap-1">
-                <Crown size={12} />
-                YOUR PLAN
-              </div>
-            ) : (
-              <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-medium py-1 px-3 rounded-bl-lg">
-                RECOMMENDED
-              </div>
-            )}
+            <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-medium py-1 px-3 rounded-bl-lg">
+              COMING SOON
+            </div>
             <h3 className="text-xl font-bold">Starter Package</h3>
             <div className="text-3xl font-bold my-4">$14<span className="text-sm font-normal text-muted-foreground">/month</span></div>
             <ul className="space-y-3 text-left mb-8">
@@ -74,17 +65,10 @@ const PricingSection: React.FC<PricingProps> = ({ onSubscribe, isPremium = false
                 <span>Priority support</span>
               </li>
             </ul>
-            {isPremium ? (
-              <Button className="w-full gap-2 bg-amber-500 hover:bg-amber-600">
-                <Crown size={16} />
-                Active Subscription
-              </Button>
-            ) : (
-              <Button onClick={onSubscribe} className="w-full gap-2">
-                <CreditCard size={16} />
-                Subscribe Now
-              </Button>
-            )}
+            <Button onClick={onSubscribe} className="w-full gap-2">
+              <CreditCard size={16} />
+              Coming Soon
+            </Button>
           </div>
         </div>
       </div>

@@ -2,15 +2,12 @@ import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { generatePresentationMarkdown, generatePresentationJson, ensureHttps } from "@/services/presentationApi";
-import { useSubscription } from "@/hooks/useSubscription";
-import { useAuth } from "@/contexts/AuthContext";
 
 // Import our components
 import Header from "./editor/Header";
 import Sidebar from "./editor/Sidebar";
 import SlidePreview from "./editor/SlidePreview";
 import ExportDialog from "./editor/ExportDialog";
-import PaymentDialog from "@/components/payment/PaymentDialog";
 
 const templatePrompts = {
   Business: "Create a professional business presentation about {topic}. Include sections for executive summary, market analysis, competitive landscape, strategy, implementation plan, and financial projections.",
@@ -34,9 +31,6 @@ const PresentationEditor = () => {
   const [incomingSlides, setIncomingSlides] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
-  const { canCreatePresentation, incrementPresentationCount, subscription } = useSubscription();
-  const [hasShownPaymentPrompt, setHasShownPaymentPrompt] = useState(false);
 
   const [slides, setSlides] = useState<Array<{ title: string; content: string; image?: string }>>([
     {
@@ -49,18 +43,6 @@ const PresentationEditor = () => {
   const handleGeneratePresentation = () => {
     if (!prompt.trim()) {
       toast.error("Please enter a topic or description for your presentation");
-      return;
-    }
-
-    if (subscription && 
-        subscription.presentations_generated > 0 && 
-        !canCreatePresentation() && 
-        !hasShownPaymentPrompt) {
-      setPaymentDialogOpen(true);
-      setHasShownPaymentPrompt(true);
-      toast.info("You've used your free trial. Please subscribe for unlimited access.", {
-        id: "free-trial-used-toast",
-      });
       return;
     }
 
@@ -101,8 +83,6 @@ const PresentationEditor = () => {
       setLoading(false);
       setIncomingSlides(false);
       setCurrentSlide(0);
-      
-      incrementPresentationCount();
       
       toast.success("Presentation generated successfully!");
     }, 2000);
@@ -241,15 +221,6 @@ const PresentationEditor = () => {
         handleExportPowerPoint={handleExportPowerPoint}
       />
 
-      <PaymentDialog 
-        open={paymentDialogOpen}
-        setOpen={(open) => {
-          setPaymentDialogOpen(open);
-          if (!open) {
-            setHasShownPaymentPrompt(true);
-          }
-        }}
-      />
     </div>
   );
 };

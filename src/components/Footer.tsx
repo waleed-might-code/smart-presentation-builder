@@ -1,8 +1,18 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import ComingSoonDialog from "@/components/ComingSoonDialog";
 
 const Footer = () => {
+  const [comingSoonOpen, setComingSoonOpen] = useState(false);
+  const [comingSoonTitle, setComingSoonTitle] = useState("Coming Soon");
+
+  const handleComingSoon = (title: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    setComingSoonTitle(title);
+    setComingSoonOpen(true);
+  };
+
   return (
     <footer className="bg-white border-t border-border py-12 px-6 md:px-10">
       <div className="max-w-7xl mx-auto">
@@ -20,19 +30,31 @@ const Footer = () => {
             <h4 className="font-medium mb-4">Product</h4>
             <ul className="space-y-2">
               <li>
-                <Link to="/features" className="text-muted-foreground text-sm hover:text-foreground transition-colors">
+                <a 
+                  href="#" 
+                  onClick={(e) => handleComingSoon("Features Coming Soon", e)}
+                  className="text-muted-foreground text-sm hover:text-foreground transition-colors"
+                >
                   Features
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to="/templates" className="text-muted-foreground text-sm hover:text-foreground transition-colors">
+                <a 
+                  href="#" 
+                  onClick={(e) => handleComingSoon("Templates Coming Soon", e)}
+                  className="text-muted-foreground text-sm hover:text-foreground transition-colors"
+                >
                   Templates
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to="/pricing" className="text-muted-foreground text-sm hover:text-foreground transition-colors">
+                <a 
+                  href="#" 
+                  onClick={(e) => handleComingSoon("Pricing Coming Soon", e)}
+                  className="text-muted-foreground text-sm hover:text-foreground transition-colors"
+                >
                   Pricing
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
@@ -41,19 +63,31 @@ const Footer = () => {
             <h4 className="font-medium mb-4">Company</h4>
             <ul className="space-y-2">
               <li>
-                <Link to="/about" className="text-muted-foreground text-sm hover:text-foreground transition-colors">
+                <a 
+                  href="#" 
+                  onClick={(e) => handleComingSoon("About Coming Soon", e)}
+                  className="text-muted-foreground text-sm hover:text-foreground transition-colors"
+                >
                   About
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to="/blog" className="text-muted-foreground text-sm hover:text-foreground transition-colors">
+                <a 
+                  href="#" 
+                  onClick={(e) => handleComingSoon("Blog Coming Soon", e)}
+                  className="text-muted-foreground text-sm hover:text-foreground transition-colors"
+                >
                   Blog
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to="/contact" className="text-muted-foreground text-sm hover:text-foreground transition-colors">
+                <a 
+                  href="#" 
+                  onClick={(e) => handleComingSoon("Contact Coming Soon", e)}
+                  className="text-muted-foreground text-sm hover:text-foreground transition-colors"
+                >
                   Contact
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
@@ -62,14 +96,22 @@ const Footer = () => {
             <h4 className="font-medium mb-4">Legal</h4>
             <ul className="space-y-2">
               <li>
-                <Link to="/privacy" className="text-muted-foreground text-sm hover:text-foreground transition-colors">
+                <a 
+                  href="#" 
+                  onClick={(e) => handleComingSoon("Privacy Policy Coming Soon", e)}
+                  className="text-muted-foreground text-sm hover:text-foreground transition-colors"
+                >
                   Privacy
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to="/terms" className="text-muted-foreground text-sm hover:text-foreground transition-colors">
+                <a 
+                  href="#" 
+                  onClick={(e) => handleComingSoon("Terms of Service Coming Soon", e)}
+                  className="text-muted-foreground text-sm hover:text-foreground transition-colors"
+                >
                   Terms
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
@@ -80,18 +122,36 @@ const Footer = () => {
             © {new Date().getFullYear()} SlideAI. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+            <a 
+              href="#" 
+              onClick={(e) => handleComingSoon("Social Media Coming Soon", e)}
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
               Twitter
             </a>
-            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+            <a 
+              href="#" 
+              onClick={(e) => handleComingSoon("Social Media Coming Soon", e)}
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
               LinkedIn
             </a>
-            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+            <a 
+              href="#" 
+              onClick={(e) => handleComingSoon("Social Media Coming Soon", e)}
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
               Instagram
             </a>
           </div>
         </div>
       </div>
+      
+      <ComingSoonDialog 
+        open={comingSoonOpen} 
+        setOpen={setComingSoonOpen}
+        title={comingSoonTitle}
+      />
     </footer>
   );
 };

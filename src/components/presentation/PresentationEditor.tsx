@@ -147,10 +147,18 @@ const PresentationEditor = () => {
 
   const handleTemplateSelect = (template: string) => {
     setSelectedTemplate(template);
-    // Populate prompt with template-specific prompt
-    const templatePrompt = templatePrompts[template];
-    if (templatePrompt) {
-      setPrompt(templatePrompt.replace("{topic}", prompt || "your topic"));
+    // If user has a topic, combine it with template. Otherwise just show template style
+    if (prompt.trim()) {
+      const templatePrompt = templatePrompts[template];
+      if (templatePrompt) {
+        setPrompt(templatePrompt.replace("{topic}", prompt));
+      }
+    } else {
+      const templatePrompt = templatePrompts[template];
+      if (templatePrompt) {
+        // Remove {topic} placeholder if no topic exists
+        setPrompt(templatePrompt.replace(" {topic}", "").replace("{topic}", ""));
+      }
     }
     toast.success(`${template} template selected`);
   };
@@ -159,10 +167,18 @@ const PresentationEditor = () => {
     setSelectedTheme(theme);
     // Switch to generate tab
     setActiveTab("generate");
-    // Get theme prompt and populate
-    const themePrompt = themePrompts[theme];
-    if (themePrompt) {
-      setPrompt(themePrompt.replace("{topic}", prompt || "your topic"));
+    // If user has a topic, combine it with theme. Otherwise just show theme style
+    if (prompt.trim()) {
+      const themePrompt = themePrompts[theme];
+      if (themePrompt) {
+        setPrompt(themePrompt.replace("{topic}", prompt));
+      }
+    } else {
+      const themePrompt = themePrompts[theme];
+      if (themePrompt) {
+        // Remove {topic} placeholder if no topic exists
+        setPrompt(themePrompt.replace(" {topic}", "").replace("{topic}", ""));
+      }
     }
     toast.success(`${theme} theme selected`);
   };
@@ -171,10 +187,18 @@ const PresentationEditor = () => {
     setSelectedLayout(layout);
     // Switch to generate tab
     setActiveTab("generate");
-    // Get layout prompt and populate
-    const layoutPrompt = layoutPrompts[layout];
-    if (layoutPrompt) {
-      setPrompt(layoutPrompt.replace("{topic}", prompt || "your topic"));
+    // If user has a topic, combine it with layout. Otherwise just show layout style
+    if (prompt.trim()) {
+      const layoutPrompt = layoutPrompts[layout];
+      if (layoutPrompt) {
+        setPrompt(layoutPrompt.replace("{topic}", prompt));
+      }
+    } else {
+      const layoutPrompt = layoutPrompts[layout];
+      if (layoutPrompt) {
+        // Remove {topic} placeholder if no topic exists
+        setPrompt(layoutPrompt.replace(" {topic}", "").replace("{topic}", ""));
+      }
     }
     toast.success(`${layout} layout selected`);
   };

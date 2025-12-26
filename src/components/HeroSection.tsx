@@ -1,14 +1,16 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import { useAuthCheck } from "@/hooks/useAuthCheck";
 import LoginPromptModal from "@/components/auth/LoginPromptModal";
+import ComingSoonDialog from "@/components/ComingSoonDialog";
 
 const HeroSection = () => {
   const navigate = useNavigate();
   const { checkAuth, showLoginPrompt, setShowLoginPrompt } = useAuthCheck();
+  const [comingSoonOpen, setComingSoonOpen] = useState(false);
 
   const handleCreateClick = () => {
     if (checkAuth()) {
@@ -17,9 +19,7 @@ const HeroSection = () => {
   };
 
   const handleTemplatesClick = () => {
-    if (checkAuth()) {
-      navigate("/templates");
-    }
+    setComingSoonOpen(true);
   };
 
   return (
@@ -80,6 +80,13 @@ const HeroSection = () => {
       <LoginPromptModal 
         open={showLoginPrompt} 
         setOpen={setShowLoginPrompt} 
+      />
+      
+      {/* Coming Soon Dialog */}
+      <ComingSoonDialog 
+        open={comingSoonOpen} 
+        setOpen={setComingSoonOpen}
+        title="Templates Coming Soon"
       />
     </section>
   );

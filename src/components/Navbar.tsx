@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, LogOut, User, Settings } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import ComingSoonDialog from "@/components/ComingSoonDialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +20,8 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ onPricingClick }) => {
   const [scrolled, setScrolled] = useState(false);
+  const [comingSoonOpen, setComingSoonOpen] = useState(false);
+  const [comingSoonTitle, setComingSoonTitle] = useState("Coming Soon");
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
@@ -49,6 +52,11 @@ const Navbar: React.FC<NavbarProps> = ({ onPricingClick }) => {
     }
   };
 
+  const handleComingSoon = (title: string) => () => {
+    setComingSoonTitle(title);
+    setComingSoonOpen(true);
+  };
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 px-6 md:px-10 py-4 transition-all duration-300 ${
@@ -70,7 +78,7 @@ const Navbar: React.FC<NavbarProps> = ({ onPricingClick }) => {
 
         <nav className="hidden md:flex items-center space-x-8">
           <button
-            onClick={handleNavigation("/features")}
+            onClick={handleComingSoon("Features Coming Soon")}
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             type="button"
           >
@@ -84,7 +92,7 @@ const Navbar: React.FC<NavbarProps> = ({ onPricingClick }) => {
             Pricing
           </button>
           <button
-            onClick={handleNavigation("/templates")}
+            onClick={handleComingSoon("Templates Coming Soon")}
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             type="button"
           >
@@ -172,6 +180,12 @@ const Navbar: React.FC<NavbarProps> = ({ onPricingClick }) => {
           )}
         </div>
       </div>
+      
+      <ComingSoonDialog 
+        open={comingSoonOpen} 
+        setOpen={setComingSoonOpen}
+        title={comingSoonTitle}
+      />
     </header>
   );
 };
